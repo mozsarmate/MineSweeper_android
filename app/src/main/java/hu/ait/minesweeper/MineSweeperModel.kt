@@ -1,24 +1,27 @@
 package hu.ait.minesweeper
 
-import android.service.quicksettings.Tile
 import android.util.Log
 import kotlin.random.Random
 
 object MineSweeperModel {
     //todo get these from mainactivity
-    val numRows = 10
-    val numCols = 10
-    val numBombs = 10
+    private const val numRows = 10
+    private const val numCols = 10
+    private const val numBombs = 10
 
     // Define the deltas for the neighboring cells (8 possible directions)
-    val dx = intArrayOf(-1, -1, -1, 0, 0, 1, 1, 1)
-    val dy = intArrayOf(-1, 0, 1, -1, 1, -1, 0, 1)
+    private val dx = intArrayOf(-1, -1, -1, 0, 0, 1, 1, 1)
+    private val dy = intArrayOf(-1, 0, 1, -1, 1, -1, 0, 1)
 
     // Create a 2D array of TileClass objects
-    val matrix: Array<Array<TileClass>> = Array(numRows) { Array(numCols) { TileClass() } }
+    private val matrix: Array<Array<TileClass>> = Array(numRows) { Array(numCols) { TileClass() } }
+
 
     fun getField(x: Int, y: Int): TileClass {
-        if (x < 0 || y < 0 || x >= numRows || y >= numCols) TileClass(false, true, 100)
+        //if invalid indexes, return dummy
+        if (x < 0 || y < 0 || x >= numRows || y >= numCols) {
+            return TileClass(hidden = false, flagged = true, bomb = 100)
+        }
         return matrix[x][y]
     }
 
@@ -42,7 +45,6 @@ object MineSweeperModel {
                 bombsPlaced++
             }
         }
-
 
 
         //calculate numeric values
