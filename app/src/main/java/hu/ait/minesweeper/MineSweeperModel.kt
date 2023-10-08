@@ -7,9 +7,10 @@ object MineSweeperModel {
     //todo get these from mainactivity
     const val numRows = 10
     const val numCols = 10
-    const val numBombs = 15
+    const val numBombs = 2
     var numRevealed = 0
     var numFlagged = 0
+    
     
     // Define the deltas for the neighboring cells (8 possible directions)
     private val dx = intArrayOf(-1, -1, -1, 0, 0, 1, 1, 1)
@@ -45,6 +46,9 @@ object MineSweeperModel {
     }
     
     fun resetGame() {
+        numRevealed = 0
+        numFlagged = 0
+        
         for (i in 0..<numRows) {
             for (j in 0..<numCols) {
                 matrix[i][j] = TileClass(hidden = true, flagged = false, bomb = 0)
@@ -103,5 +107,25 @@ object MineSweeperModel {
             }
         }
     }
+    
+    fun checkWin(): Boolean {
+        /*for (i in 0..<numRows) {
+            for (j in 0..<numCols) {
+                //if there is an unflagged bomb, sure no win
+                if(matrix[i][j].bomb == 9 && !matrix[i][j].flagged) {
+                    return false
+                }
+            }
+        }*/
+        val numCell = numCols * numRows
+        if (numRevealed != numCell - numBombs)
+            return false
+        if (numFlagged != numBombs)
+            return false
+
+        
+        return true
+    }
+    
     
 }

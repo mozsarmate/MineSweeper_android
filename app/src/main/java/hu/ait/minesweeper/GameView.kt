@@ -12,7 +12,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import hu.ait.minesweeper.R.color.*
 import kotlin.math.abs
@@ -20,14 +19,13 @@ import kotlin.math.abs
 @SuppressLint("ResourceAsColor")
 class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     
-    private var gridNumW = 10;
-    private var gridNumH = 10;
-    private val cellPadding = 10;
+    private var gridNumW = 0
+    private var gridNumH = 0
+    private val cellPadding = 10
     private val paintBackground = Paint()
     private val paintRect = Paint()
     private val paintLine = Paint()
     private val paintText = Paint()
-    private val flagModeEnabled: Boolean = false
     private val flag = BitmapFactory.decodeResource(resources, R.mipmap.flag_foreground)
     private val bomb = BitmapFactory.decodeResource(resources, R.mipmap.bomb_foreground)
     private var srcRect = Rect()
@@ -38,16 +36,14 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     
     
     init {
+        gridNumW = MineSweeperModel.numCols
+        gridNumH = MineSweeperModel.numRows
         
-        gridNumW = (context as MainActivity).gridNumW
-        gridNumH = (context as MainActivity).gridNumH
-        
-        
-        paintBackground.color = R.color.bgGray
+        paintBackground.color = bgGray
         paintBackground.style = Paint.Style.FILL
         
         //todo use real color
-        paintRect.color = R.color.tileGray
+        paintRect.color = tileGray
         paintRect.style = Paint.Style.FILL
         
         paintLine.color = Color.BLACK
@@ -138,8 +134,8 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 .show()
         }
         else if (won) {
-            Snackbar.make(rootView, "Game Over!", Snackbar.LENGTH_LONG)
-                .setAction("ReTry") { resetGameMaster() }
+            Snackbar.make(rootView, "You have flagged all the bombs! Congrats", Snackbar.LENGTH_LONG)
+                .setAction("Play Again!") { resetGameMaster() }
                 .show()
         }
     }
@@ -187,6 +183,12 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     MineSweeperModel.autoReveal(cx, cy)
                 }
             }
+            
+            //check win
+            if (!gameOver) {
+                won = MineSweeperModel.checkWin()
+            }
+            
             //rerender
             invalidate()
         }
@@ -207,6 +209,7 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     fun resetGameMaster(reason: Int = 0) {
         MineSweeperModel.resetGame()
         gameOver = false
+        won = false
         invalidate()
     }
 }

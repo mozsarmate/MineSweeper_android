@@ -6,9 +6,8 @@ import android.util.Log
 import hu.ait.minesweeper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    public val gridNumW = 10;
-    public val gridNumH = 10;
-    public var flagModeEnabled : Boolean = false;
+
+    var flagModeEnabled : Boolean = false
 
     lateinit var binding: ActivityMainBinding
 
@@ -17,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnReset.setOnClickListener(){
+        binding.btnReset.setOnClickListener {
             binding.gameView.resetGameMaster()
         }
 
