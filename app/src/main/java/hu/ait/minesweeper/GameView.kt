@@ -40,10 +40,10 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         gridNumW = MineSweeperModel.numCols
         gridNumH = MineSweeperModel.numRows
         
-        paintBackground.color = ContextCompat.getColor(this.context, R.color.bgGray)
+        paintBackground.color = ContextCompat.getColor(this.context, bgGray)
         paintBackground.style = Paint.Style.FILL
         
-        paintRect.color = ContextCompat.getColor(this.context, R.color.tileGray)
+        paintRect.color = ContextCompat.getColor(this.context, tileGray)
         paintRect.style = Paint.Style.FILL
         
         paintLine.color = Color.BLACK
@@ -52,6 +52,7 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         
         paintText.color = Color.BLACK
         paintText.textSize = 60f
+        paintText.isAntiAlias = true
         
         srcRect = Rect(0, 0, flag.width, flag.height)
         
@@ -117,10 +118,12 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     if (curTile.bomb == 9) {
                         drawIcon(sw, i, sh, j, canvas, bomb)
                     } else {
+                        val textWidth = paintText.measureText(curTile.bomb.toString())
+                        val textHeight = paintText.descent() - paintText.ascent()
                         canvas?.drawText(
                             curTile.bomb.toString(),
-                            sw * i + cellPadding + 30,
-                            sh * j + cellPadding + 60,
+                            (sw * (i + 0.5) - textWidth / 2).toFloat(),
+                            (sh * (j + 1.05) - textHeight / 2).toFloat(),
                             paintText
                         )
                     }
@@ -165,6 +168,15 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             if ((context as MainActivity).flagModeEnabled || longPress) {
                 MineSweeperModel.invertFlag(cx, cy)
             } else {
+                
+                //if lucky first try is enabled, and was unlucky regenerate based on selection
+                //todo implement afterwards
+                /*
+                if (MineSweeperModel.numRevealed == 0 && (context as MainActivity).luckyFirst){
+                    resetGameMaster(1)
+                }
+                */
+                
                 val clickedTile = MineSweeperModel.getField(cx, cy)
                 
                 //if it was already uncovered or flagged, do nothing
@@ -207,7 +219,7 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         canvas?.drawBitmap(icon, srcRect, destRect, null)
     }
     
-    fun resetGameMaster(reason: Int = 0) {
+    fun resetGameMaster() {
         MineSweeperModel.resetGame()
         gameOver = false
         won = false

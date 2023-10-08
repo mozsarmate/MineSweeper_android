@@ -91,7 +91,7 @@
             android:textSize="14sp"
             tools:ignore="VisualLintBounds"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="8dp" />
 
     <CheckBox
             android:text="@string/reveal"
@@ -101,7 +101,7 @@
             android:checked="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
             android:layout_marginStart="16dp" />
 
     <CheckBox
@@ -114,7 +114,9 @@
             android:layout_marginStart="16dp"
             app:layout_constraintBottom_toTopOf="@+id/cbAutoReveal"
             android:editable="false"
-            android:enabled="false" />
+            android:enabled="false"
+            android:padding="0dp"
+            android:layout_marginBottom="-8dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
