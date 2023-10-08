@@ -49,11 +49,20 @@ object MineSweeperModel {
         numRevealed = 0
         numFlagged = 0
         
+        resetTiles()
+        placeBombs()
+        calculateNumerics()
+    }
+    
+    private fun resetTiles() {
         for (i in 0..<numRows) {
             for (j in 0..<numCols) {
                 matrix[i][j] = TileClass(hidden = true, flagged = false, bomb = 0)
             }
         }
+    }
+    
+    private fun placeBombs() {
         var bombsPlaced = 0
         while (bombsPlaced < numBombs) {
             val rndx = Random.nextInt(0, 10)
@@ -64,9 +73,9 @@ object MineSweeperModel {
                 bombsPlaced++
             }
         }
-        
-        
-        //calculate numeric values
+    }
+    
+    private fun calculateNumerics() {
         for (i in 0..<numRows) {
             for (j in 0..<numCols) {
                 //if not a bomb
@@ -75,7 +84,7 @@ object MineSweeperModel {
                     for (k in 0..<8) {
                         val ni = i + dx[k]
                         val nj = j + dy[k]
-                        
+                    
                         //check if the neighboring cell is within bounds
                         if (ni in 0..<numRows && nj >= 0 && nj < numCols) {
                             //check if the neighboring cell is a bomb
@@ -97,9 +106,9 @@ object MineSweeperModel {
             
             //check if the neighboring cell is within bounds
             if (ni in 0..<numRows && nj >= 0 && nj < numCols) {
-                if (matrix[ni][nj].hidden) {
-                    matrix[ni][nj].hidden = false
-                    numRevealed++
+                if (matrix[ni][nj].hidden && !matrix[ni][nj].flagged) {
+                    revealTile(ni, nj)
+                    
                     if (matrix[ni][nj].bomb == 0) {
                         autoReveal(ni, nj)
                     }
@@ -109,20 +118,10 @@ object MineSweeperModel {
     }
     
     fun checkWin(): Boolean {
-        /*for (i in 0..<numRows) {
-            for (j in 0..<numCols) {
-                //if there is an unflagged bomb, sure no win
-                if(matrix[i][j].bomb == 9 && !matrix[i][j].flagged) {
-                    return false
-                }
-            }
-        }*/
-        val numCell = numCols * numRows
-        if (numRevealed != numCell - numBombs)
+        if (numRevealed != numCols * numRows - numBombs)
             return false
         if (numFlagged != numBombs)
             return false
-
         
         return true
     }

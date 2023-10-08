@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MineSweeper</string>
+    <string name="flag_mode">Flag Mode</string>
+    <string name="reset">Reset</string>
+    <string name="normal_mode">Normal Mode</string>
+    <string name="f">F</string>
+    <string name="n">N</string>
 </resources>
