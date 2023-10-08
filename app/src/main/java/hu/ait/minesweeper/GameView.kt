@@ -12,6 +12,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import hu.ait.minesweeper.R.color.*
 import kotlin.math.abs
@@ -39,11 +40,10 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         gridNumW = MineSweeperModel.numCols
         gridNumH = MineSweeperModel.numRows
         
-        paintBackground.color = bgGray
+        paintBackground.color = ContextCompat.getColor(this.context, R.color.bgGray)
         paintBackground.style = Paint.Style.FILL
         
-        //todo use real color
-        paintRect.color = tileGray
+        paintRect.color = ContextCompat.getColor(this.context, R.color.tileGray)
         paintRect.style = Paint.Style.FILL
         
         paintLine.color = Color.BLACK

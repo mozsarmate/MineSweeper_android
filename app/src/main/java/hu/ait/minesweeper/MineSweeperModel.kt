@@ -4,10 +4,9 @@ import android.util.Log
 import kotlin.random.Random
 
 object MineSweeperModel {
-    //todo get these from mainactivity
     const val numRows = 10
     const val numCols = 10
-    const val numBombs = 2
+    const val numBombs = 16
     var numRevealed = 0
     var numFlagged = 0
     
