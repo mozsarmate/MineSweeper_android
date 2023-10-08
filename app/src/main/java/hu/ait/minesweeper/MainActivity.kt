@@ -23,22 +23,13 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnReset.performClick()
 
-        binding.swMode.setOnClickListener(){
-            //todo implement this more elegantly, maybe not with a global var
-            flagModeEnabled = binding.swMode.isChecked
+        binding.swMode.setOnCheckedChangeListener { _, isChecked ->
+            flagModeEnabled = isChecked
             Log.d("MAIN","Switch state changed flagMode: $flagModeEnabled")
         }
 
-
-        binding.btnList.setOnClickListener() {
-            Log.d("MAIN","LIST")
-            for (i in 0..<gridNumW) {
-                for (j in 0..<gridNumH) {
-
-                    val cur = MineSweeperModel.getField(i,j)
-                    Log.d("MAIN","$i, $j  :::::   ${cur.bomb}   ${cur.flagged}   ${cur.hidden}")
-                }
-            }
-        }
+        
     }
 }
+
+
