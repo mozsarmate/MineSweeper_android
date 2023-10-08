@@ -10,7 +10,7 @@ class MainActivity : AppCompatActivity() {
     public val gridNumH = 10;
     public var flagModeEnabled : Boolean = false;
 
-    private lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

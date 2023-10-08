@@ -5,18 +5,20 @@ import kotlin.random.Random
 
 object MineSweeperModel {
     //todo get these from mainactivity
-    private const val numRows = 10
-    private const val numCols = 10
-    private const val numBombs = 15
-
+    const val numRows = 10
+    const val numCols = 10
+    const val numBombs = 15
+    var numRevealed = 0
+    var numFlagged = 0
+    
     // Define the deltas for the neighboring cells (8 possible directions)
     private val dx = intArrayOf(-1, -1, -1, 0, 0, 1, 1, 1)
     private val dy = intArrayOf(-1, 0, 1, -1, 1, -1, 0, 1)
-
+    
     // Create a 2D array of TileClass objects
     private val matrix: Array<Array<TileClass>> = Array(numRows) { Array(numCols) { TileClass() } }
-
-
+    
+    
     fun getField(x: Int, y: Int): TileClass {
         //if invalid indexes, return dummy
         if (x < 0 || y < 0 || x >= numRows || y >= numCols) {
@@ -24,11 +26,24 @@ object MineSweeperModel {
         }
         return matrix[x][y]
     }
-
+    
     fun setField(x: Int, y: Int, content: TileClass) {
         matrix[x][y] = content
     }
-
+    
+    fun revealTile(x: Int, y: Int) {
+        if (matrix[x][y].hidden) numRevealed++
+        
+        matrix[x][y].hidden = false
+    }
+    
+    fun invertFlag(x: Int, y: Int) {
+        matrix[x][y].flagged = !matrix[x][y].flagged
+        
+        if (matrix[x][y].flagged) numFlagged++
+        else numFlagged--
+    }
+    
     fun resetGame() {
         for (i in 0..<numRows) {
             for (j in 0..<numCols) {
@@ -45,8 +60,8 @@ object MineSweeperModel {
                 bombsPlaced++
             }
         }
-
-
+        
+        
         //calculate numeric values
         for (i in 0..<numRows) {
             for (j in 0..<numCols) {
@@ -56,7 +71,7 @@ object MineSweeperModel {
                     for (k in 0..<8) {
                         val ni = i + dx[k]
                         val nj = j + dy[k]
-
+                        
                         //check if the neighboring cell is within bounds
                         if (ni in 0..<numRows && nj >= 0 && nj < numCols) {
                             //check if the neighboring cell is a bomb
@@ -71,15 +86,16 @@ object MineSweeperModel {
         }
     }
     
-    fun autoReveal(cx : Int, cy : Int){
+    fun autoReveal(cx: Int, cy: Int) {
         for (k in 0..<8) {
             val ni = cx + dx[k]
             val nj = cy + dy[k]
-        
+            
             //check if the neighboring cell is within bounds
             if (ni in 0..<numRows && nj >= 0 && nj < numCols) {
-                if(matrix[ni][nj].hidden) {
+                if (matrix[ni][nj].hidden) {
                     matrix[ni][nj].hidden = false
+                    numRevealed++
                     if (matrix[ni][nj].bomb == 0) {
                         autoReveal(ni, nj)
                     }
@@ -87,5 +103,5 @@ object MineSweeperModel {
             }
         }
     }
-
+    
 }

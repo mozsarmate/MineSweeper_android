@@ -15,6 +15,7 @@ import android.view.View
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import hu.ait.minesweeper.R.color.*
+import kotlin.math.abs
 
 @SuppressLint("ResourceAsColor")
 class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -32,6 +33,7 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private var srcRect = Rect()
     private var destRect = Rect()
     private var gameOver: Boolean
+    private var won: Boolean
     private var prevDownClick: ClickClass = ClickClass()
     
     
@@ -58,12 +60,19 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         srcRect = Rect(0, 0, flag.width, flag.height)
         
         gameOver = false
+        won = false
     }
     
     override fun onDraw(canvas: Canvas?) {
         //super.onDraw(canvas)
         drawGrid(canvas)
         drawTiles(canvas)
+        drawStat()
+    }
+    
+    private fun drawStat() {
+        val ans = "Revealed: ${MineSweeperModel.numRevealed} / ${MineSweeperModel.numRows * MineSweeperModel.numCols - MineSweeperModel.numBombs}      Flagged: ${MineSweeperModel.numFlagged} / ${MineSweeperModel.numBombs}"
+        (context as MainActivity).binding.tvMainInstruction.text = ans
     }
     
     private fun drawGrid(canvas: Canvas?) {
@@ -128,6 +137,11 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 .setAction("ReTry") { resetGameMaster() }
                 .show()
         }
+        else if (won) {
+            Snackbar.make(rootView, "Game Over!", Snackbar.LENGTH_LONG)
+                .setAction("ReTry") { resetGameMaster() }
+                .show()
+        }
     }
     
     
@@ -147,60 +161,36 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             Log.d("MAIN", "DOWN $prevDownClick")
         }
         if (event.action == MotionEvent.ACTION_UP) {
-            
-            Log.d("MAIN", "UP ${ClickClass(cx, cy)}")
-            
             //if touched outside, do nothing
             if (cx < 0 || cy < 0 || cx >= gridNumW || cy >= gridNumH) return true
             
-            val clickedTile = MineSweeperModel.getField(cx, cy)
-            Log.d("MAIN", "$clickedTile")
-            
-            //if long press, flag it
-            if (prevDownClick.x == cx && prevDownClick.y == cy && Math.abs(prevDownClick.time - System.currentTimeMillis()) > 300) {
-                setFlag(cx, cy, clickedTile)
-                invalidate()
-                return true
-            }
-            
-            //if Flag mode is on, just flag/unflag is
-            if ((context as MainActivity).flagModeEnabled) {
-                //invert flag
-                setFlag(cx, cy, clickedTile)
-                
+            //if Flag mode is on or valid long press was detected, just flag/unflag is
+            val longPress : Boolean = prevDownClick.x == cx && prevDownClick.y == cy && abs(prevDownClick.time - System.currentTimeMillis()) > 300
+            if ((context as MainActivity).flagModeEnabled || longPress) {
+                MineSweeperModel.invertFlag(cx, cy)
             } else {
+                val clickedTile = MineSweeperModel.getField(cx, cy)
+                
                 //if it was already uncovered or flagged, do nothing
                 if (!clickedTile.hidden || clickedTile.flagged)
                     return true
                 
                 //reveal it anyways
-                clickedTile.hidden = false
+                MineSweeperModel.revealTile(cx, cy)
                 
                 //if it is a bomb, game over
                 if (clickedTile.bomb == 9) {
                     gameOver = true
                 }
-                //auto reveal
+                //if it is a 0, run auto reveal
                 else if (clickedTile.bomb == 0) {
                     MineSweeperModel.autoReveal(cx, cy)
                 }
-                MineSweeperModel.setField(cx, cy, clickedTile)
             }
             //rerender
             invalidate()
         }
         return true
-    }
-    
-    private fun setFlag(
-        cx: Int,
-        cy: Int,
-        clickedTile: TileClass = MineSweeperModel.getField(cx, cy)
-    ) {
-        
-        Log.d("MAIN", "FLAGGED $cx , $cy")
-        clickedTile.flagged = !clickedTile.flagged
-        MineSweeperModel.setField(cx, cy, clickedTile)
     }
     
     private fun drawIcon(sw: Float, i: Int, sh: Float, j: Int, canvas: Canvas?, icon: Bitmap) {
