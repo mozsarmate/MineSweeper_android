@@ -2,12 +2,13 @@ package hu.ait.minesweeper
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import hu.ait.minesweeper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     var flagModeEnabled : Boolean = false
+    var autoRevealEnabled : Boolean = true
+    var luckyFirst : Boolean = true
 
     lateinit var binding: ActivityMainBinding
 
@@ -22,12 +23,19 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnReset.performClick()
 
+        
+        
         binding.swMode.setOnCheckedChangeListener { _, isChecked ->
             flagModeEnabled = isChecked
-            Log.d("MAIN","Switch state changed flagMode: $flagModeEnabled")
         }
-
-        
+    
+        binding.cbAutoReveal.setOnCheckedChangeListener { _, isChecked ->
+            autoRevealEnabled = isChecked
+        }
+    
+        binding.cbLuckyFirst.setOnCheckedChangeListener { _, isChecked ->
+            luckyFirst = isChecked
+        }
     }
 }
 

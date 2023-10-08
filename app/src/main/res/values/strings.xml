@@ -5,4 +5,6 @@
     <string name="normal_mode">Normal Mode</string>
     <string name="f">F</string>
     <string name="n">N</string>
+    <string name="reveal">Auto-reveal 0 fields</string>
+    <string name="lucky">Lucky 1st try</string>
 </resources>

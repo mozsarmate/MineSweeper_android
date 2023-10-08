@@ -147,7 +147,7 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event == null) return true
-        if (gameOver) return true
+        if (gameOver || won) return true
         
         val cx: Int = event.x.toInt() / (width / gridNumW)
         val cy: Int = event.y.toInt() / (height / gridNumH)
@@ -180,7 +180,8 @@ class GameView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 }
                 //if it is a 0, run auto reveal
                 else if (clickedTile.bomb == 0) {
-                    MineSweeperModel.autoReveal(cx, cy)
+                    if ((context as MainActivity).autoRevealEnabled)
+                        MineSweeperModel.autoReveal(cx, cy)
                 }
             }
             
